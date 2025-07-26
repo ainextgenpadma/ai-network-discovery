@@ -52,7 +52,7 @@ pip install pandas openpyxl netmiko requests
 bash
 Copy
 Edit
-python device_inventory.py
+python network-discovery.py
 
 **🔒 Notes**
 Cisco IOS switches are required for CLI compatibility
