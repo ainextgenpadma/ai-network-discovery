@@ -1,46 +1,73 @@
-# ai-network-discovery
-Automated Cisco Network Inventory with Connected Device Insights
+**AI-Assisted Device Inventory Snapshot**
+Automated Network Discovery using Cisco CLI, LLDP, ARP, and MAC OUI
 
 **Overview**
-This project uses an AI-assisted Python script to automatically:
-Discover Cisco switch stack sizes and models
-Identify all connected end devices using LLDP neighbor info
-Lookup MAC vendors using OUI mapping
-Generate structured Excel reports
-Provide full logs for troubleshooting and planning
-The solution was developed with help from ChatGPT, accelerating development and bypassing the need for expensive network management platforms.
+This project automates the creation of a comprehensive snapshot of all network-connected devices per switch — including MAC addresses, LLDP neighbors, vendor lookup via OUI, and last traffic timestamps.
+The Python script was developed using ChatGPT as a coding assistant, allowing rapid iteration, efficient parsing logic, and robust error handling. It stores all output in both SQLite and Excel formats.
 
-**Objective**
-Feature	Description
-🧠 AI-assisted scripting	All logic was developed via prompt engineering using ChatGPT
-🔗 SSH-based Discovery	Connects to switches using Netmiko
-📦 Stack Size Detection	Parses show switch to get number of stack members
-🛠️ Switch Model Parsing	Uses show inventory and filters out non-switch modules
-🔌 LLDP Neighbor Discovery	Parses show lldp neighbors detail to find connected devices
-🧬 MAC Address + Vendor Lookup	Extracts MACs and identifies vendors using OUI prefix
-📊 Structured Reporting	Outputs data into an Excel sheet: switch_report.xlsx
-🪵 Logging & Fault Tolerance	Full log file and exception handling per switch
+🎯 What It Does
+**Feature	Description**
+🧠 AI-Assisted Scripting	Script was co-developed using ChatGPT
+🔗 SSH-based CLI Discovery	Uses Netmiko to connect to Cisco IOS switches
+📊 Interface Status Parsing	Parses show interfaces status for port status, VLAN, etc.
+🔌 MAC Address Table	Extracts MAC addresses from show mac address-table
+🧬 OUI → Vendor Lookup	Queries MAC vendors via cached OUI or external API
+🧭 LLDP Neighbor Details	Parses show lldp neighbors detail for topology mapping
+🕒 Last Traffic Seen	Extracts last input/output from show interfaces
+🌐 ARP IP Mapping	Matches MAC to IP using L3 switch ARP table
+💾 Multi-format Output	Appends data to:
 
-**How It Works**
-Reads input from switch_list.xlsx with the following columns:
-hostname
-ip
-username
-password
-SSHes into each Cisco switch using Netmiko.
+device_inventory.db (SQLite)
+device_inventory.xlsx (new sheet per day)
 
-**Executes**:
+📁 Input File: switch_list.xlsx
+Column	Description
+switch_type	access_switch or layer3_switch
+ip	Management IP of the switch
+username	SSH username
+password	SSH password
 
-This script is a real example of AI-powered assistance:
-Entire code logic (Netmiko setup, LLDP parsing, vendor lookup) was co-written with ChatGPT
-Iteratively refined the script to support new features like LLDP, MAC filtering, and vendor mapping
-Delivered a scalable automation tool in hours, not days
-Replaced the need for expensive NMS tools like Cisco Prime, SolarWinds, or Aruba AirWave
+📂 **Output**
+device_inventory.xlsx
+New sheet created for each run (e.g., 2025-07-26)
 
-📁 Files
-**File Name	Description**
-network_discovery.py	Main script (shown above)
-switch_list.xlsx	Input file (your switch inventory with credentials)
-switch_report.xlsx	Auto-generated report with stack data
-switch_discovery.log	Log file capturing connection status/errors
-README.md	This documentation
+Each row corresponds to one switch port
+
+device_inventory.db
+Append-only log of inventory snapshots
+
+**Enables historical tracking and queries**
+
+**Sample Columns:**
+switch_name	port	status	vlan	mac_address	vendor	neighbor_name	ip_address	last_traffic_seen
+
+**🛠️ How to Use**
+✅ Install Requirements
+bash
+Copy
+Edit
+pip install pandas openpyxl netmiko requests
+
+**▶️ Run the Script**
+bash
+Copy
+Edit
+python device_inventory.py
+
+**🔒 Notes**
+Cisco IOS switches are required for CLI compatibility
+LLDP, ARP, and MAC address table parsing works best with consistent CLI outputs
+The OUI vendor cache (oui_cache.csv) will be created automatically
+Logging output is written to device_inventory.log
+
+**📌 Why This Project Matters**
+
+Replaces expensive network discovery tools like Cisco Prime or SolarWinds
+Provides rich, real-time network visibility
+Enables data-driven planning for migrations, cleanups, and capacity analysis
+Built in collaboration with an AI assistant, reducing manual effort
+
+**📬 Contact**
+Padma Chandran
+linkedin.com/in/padmachandran07
+
